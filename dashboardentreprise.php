@@ -1,9 +1,7 @@
 <?php
 // dashboard_entreprise.php
-// Tableau de bord pour les entreprises — consultation des résultats des écoles affiliées
 session_start();
 
-// --- Auth provisoire ---
 if (!isset($_SESSION['user'])) {
     $_SESSION['user'] = [
         'id' => 600,
@@ -20,9 +18,11 @@ if ($_SESSION['user']['role'] !== 'entreprise') {
 
 // Stockage JSON
 $dataSchools = __DIR__ . '/data/ecoles';
-$dataQuizzes = __DIR__ . '/data/quizzes';
+$dataQuiz = __DIR__ . '/data/quiz';
+$dataAnswers = __DIR__ . '/data/answers';
 
-foreach ([$dataSchools, $dataQuizzes] as $dir) if (!is_dir($dir)) mkdir($dir, 0755, true);
+foreach ([$dataSchools, $dataQuiz, $dataAnswers] as $dir) 
+    if (!is_dir($dir)) mkdir($dir, 0755, true);
 
 function load_dir($dir) {
     $files = glob($dir . '/*.json');
@@ -35,7 +35,7 @@ function load_dir($dir) {
 }
 
 $schools = load_dir($dataSchools);
-$quizzes = load_dir($dataQuizzes);
+$quiz = load_dir($dataQuiz);
 
 ?>
 <!doctype html>
@@ -64,7 +64,10 @@ $quizzes = load_dir($dataQuizzes);
 <header>
     <div>
         <h1>Quizzeo — Espace Entreprise</h1>
-        <div class="small">Connecté en tant que : <?php echo htmlspecialchars($_SESSION['user']['name']); ?></div>
+        <div class="small">Connecté en tant que : <?= htmlspecialchars($_SESSION['user']['name']); ?></div>
+    </div>
+    <div>
+        <a class="btn" href="create_quiz.php">+ Nouveau quiz</a>
     </div>
 </header>
 
@@ -82,12 +85,14 @@ $quizzes = load_dir($dataQuizzes);
                 <?php foreach ($schools as $s): ?>
                     <?php
                         $countQuiz = 0;
-                        foreach ($quizzes as $q) if (($q['school_id'] ?? null) == $s['id']) $countQuiz++;
+                        foreach ($quiz as $q) 
+                            if (($q['school_id'] ?? null) == $s['id']) 
+                                $countQuiz++;
                     ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($s['name']); ?></td>
-                        <td><?php echo htmlspecialchars($s['city'] ?? '—'); ?></td>
-                        <td><?php echo $countQuiz; ?></td>
+                        <td><?= htmlspecialchars($s['name']); ?></td>
+                        <td><?= htmlspecialchars($s['city'] ?? '—'); ?></td>
+                        <td><?= $countQuiz; ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
@@ -102,10 +107,24 @@ $quizzes = load_dir($dataQuizzes);
 
         <form method="get">
             <select name="quiz_id">
-                <?php foreach ($quizzes as $q): ?>
-                    <option value="<?php echo $q['id']; ?>" <?php if(isset($_GET['quiz_id']) && $_GET['quiz_id']==$q['id']) echo 'selected'; ?>>
-                        <?php echo htmlspecialchars($q['title']); ?> (<?php echo htmlspecialchars($q['school_name'] ?? ''); ?>)
+                <?php foreach ($quiz as $q): ?>
+
+                    <?php  
+                        // 🔥 Nouveau : compter les réponses enregistrées
+                        $respFile = $dataAnswers . "/" . $q['id'] . ".json";
+                        $respCount = file_exists($respFile)
+                            ? count(json_decode(file_get_contents($respFile), true))
+                            : 0;
+
+                        $label = $q['title'];
+                        if ($respCount > 0) $label .= " — réponses: " . $respCount;
+                    ?>
+
+                    <option value="<?= $q['id']; ?>" 
+                        <?= (isset($_GET['quiz_id']) && $_GET['quiz_id']==$q['id']) ? "selected" : "" ?>>
+                        <?= htmlspecialchars($label); ?>
                     </option>
+
                 <?php endforeach; ?>
             </select>
             <button class="btn">Afficher</button>
@@ -114,24 +133,40 @@ $quizzes = load_dir($dataQuizzes);
         <?php if (isset($_GET['quiz_id'])):
             $quizId = $_GET['quiz_id'];
             $target = null;
-            foreach ($quizzes as $q) if ($q['id'] == $quizId) $target = $q;
+
+            foreach ($quiz as $q) 
+                if ($q['id'] == $quizId) 
+                    $target = $q;
         ?>
 
             <?php if (!$target): ?>
                 <p class="small">Quiz introuvable.</p>
             <?php else: ?>
-                <h3 style="margin-top:20px">Résultats — <?php echo htmlspecialchars($target['title']); ?></h3>
-                <?php $responses = $target['responses'] ?? []; ?>
+                <h3 style="margin-top:20px">Résultats — <?= htmlspecialchars($target['title']); ?></h3>
+
+                <?php  
+                    // 🔥 Nouveau : récupérer les réponses depuis /data/answers/
+                    $respFile = $dataAnswers . "/" . $quizId . ".json";
+                    $responses = [];
+
+                    if (!empty($target['responses'])) {
+                        $responses = $target['responses'];
+                    } elseif (file_exists($respFile)) {
+                        $responses = json_decode(file_get_contents($respFile), true);
+                    }
+                ?>
+
                 <?php if (empty($responses)): ?>
                     <p class="small">Aucun élève n'a encore répondu.</p>
                 <?php else: ?>
                     <table>
-                        <thead><tr><th>Nom</th><th>Score</th></tr></thead>
+                        <thead><tr><th>Nom</th><th>Score</th><th>Date</th></tr></thead>
                         <tbody>
                             <?php foreach ($responses as $r): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($r['name']); ?></td>
-                                    <td><?php echo htmlspecialchars($r['score']); ?> / <?php echo htmlspecialchars($target['max_score'] ?? '?'); ?></td>
+                                    <td><?= htmlspecialchars($r['user'] ?? $r['name'] ?? "Anonyme"); ?></td>
+                                    <td><?= htmlspecialchars($r['score']); ?></td>
+                                    <td><?= htmlspecialchars($r['date'] ?? ""); ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -143,7 +178,9 @@ $quizzes = load_dir($dataQuizzes);
 
 </main>
 
-<footer style="text-align:center;color:#777;margin:20px 0;font-size:13px">Quizzeo — Interface Entreprise</footer>
+<footer style="text-align:center;color:#777;margin:20px 0;font-size:13px">
+    Quizzeo — Interface Entreprise
+</footer>
 
 </body>
 </html>

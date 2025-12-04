@@ -12,33 +12,50 @@ $quiz = json_decode(file_get_contents($path), true);
 <!DOCTYPE html>
 <html>
 <head>
-    <title><?= $quiz["title"] ?></title>
+    <meta charset="UTF-8">
+    <title><?= htmlspecialchars($quiz["title"] ?? "Quiz") ?></title>
 </head>
 <body>
 
-<h2><?= $quiz["title"] ?></h2>
+<h1><?= htmlspecialchars($quiz["title"] ?? "Quiz") ?></h1>
 
-<form method="POST" action="submitQuizz.php">
-    <input type="hidden" name="quiz_id" value="<?= $quiz["id"] ?>">
+<form method="post" action="submit_quiz.php?id=<?= urlencode($_GET['id']) ?>">
 
-    <?php foreach ($quiz["questions"] as $i => $q): ?>
-        <h3><?= $q["name"] ?> (<?= $q["points"] ?> pts)</h3>
+<?php
+$i = 0;
+foreach ($quiz["questions"] as $q):
 
-        <?php
+    // 🔥 1. NOM DE LA QUESTION (compatibilité)
+    $label = $q["name"] ?? $q["text"] ?? "Question";
+
+    // 🔥 2. RÉPONSES (compatibilité)
+    if (is_array($q["answers"])) {
+        // déjà un array → OK
+        $answers = $q["answers"];
+    } else {
+        // ancienne version → answers = "A;B;C"
         $answers = explode(";", $q["answers"]);
-        foreach ($answers as $a):
-        ?>
-            <label>
-                <input type="radio" name="answer[<?= $i ?>]" value="<?= $a ?>" required>
-                <?= $a ?>
-            </label><br>
-        <?php endforeach; ?>
+    }
 
-        <hr>
+?>
+    <h3><?= htmlspecialchars($label) ?></h3>
+
+    <?php foreach ($answers as $a): ?>
+        <label>
+            <input type="radio" name="answer[<?= $i ?>]" value="<?= htmlspecialchars($a) ?>" required>
+            <?= htmlspecialchars($a) ?>
+        </label><br>
     <?php endforeach; ?>
 
-    <button type="submit">Envoyer</button>
+    <hr>
+<?php
+$i++;
+endforeach;
+?>
+
+<button type="submit">Envoyer</button>
 
 </form>
+
 </body>
 </html>

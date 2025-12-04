@@ -5,5 +5,40 @@
         "role": "ecole",
         "password": "$2y$10$OCo4n1Z7kTwrn8barhs40ugIHur9ZcbObQ3DVblJBSllyyiCIZwii",
         "status": "active"
+    },
+    "t@d.com": {
+        "name": "test",
+        "email": "t@d.com",
+        "role": "ecole",
+        "password": "$2y$10$UgcDBebpBLt3KQZijaiYheRWPS84FUG1vSfIArhu2Ka.4tgJBV8W2",
+        "status": "active"
+    },
+    "t@f.com": {
+        "name": "test",
+        "email": "t@f.com",
+        "role": "ecole",
+        "password": "$2y$10$GVYeLe4g\/7ZCt37rKGHzreU2tnKTLSYcvbzyAc510s7iTWS32W9ve",
+        "status": "active"
+    },
+    "sdi@gmail.com": {
+        "name": "test1",
+        "email": "sdi@gmail.com",
+        "role": "entreprise",
+        "password": "$2y$10$Ka7.KZsKahee2rYduSIPOeb\/QFJJuCESVWBRbL\/pYIfcB\/BwpZbHq",
+        "status": "active"
+    },
+    "donatiensopharat61@gmail.com": {
+        "name": "Donatien",
+        "email": "donatiensopharat61@gmail.com",
+        "role": "admin",
+        "password": "$2y$10$KQBr0GZVAmtNEXSjm21OC.ftBiNSwcPRVXzfueFFkApWEiyqIUJdK",
+        "status": "active"
+    },
+    "te@r.com": {
+        "name": "test2",
+        "email": "te@r.com",
+        "role": "utilisateur",
+        "password": "$2y$10$Q0CnK4VijcCvRL4xO5O9Qu90PrIPhEn\/TGHCa8BpPZ7lDl5jO8H7i",
+        "status": "active"
     }
 }

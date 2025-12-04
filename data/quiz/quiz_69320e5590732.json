@@ -1,0 +1,18 @@
+{
+    "id": "quiz_69320e5590732",
+    "title": "test",
+    "status": "en_ecriture",
+    "questions": [
+        {
+            "text": "Je sais pas ",
+            "points": 5,
+            "answers": [
+                "1",
+                "caramel",
+                "dracaufeu",
+                "mercedes"
+            ],
+            "correct": "dracaufeu"
+        }
+    ]
+}

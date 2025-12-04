@@ -154,8 +154,6 @@ if (isset($_POST['register'])) {
             <option value="">Choisir un rôle</option>
             <option value="ecole">École</option>
             <option value="entreprise">Entreprise</option>
-            <option value="utilisateur">Utilisateur</option>
-            <option value="admin">Administrateur</option>
         </select>
  
         <input type="password" name="password" placeholder="Mot de passe" required>

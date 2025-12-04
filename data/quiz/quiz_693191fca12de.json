@@ -1,0 +1,36 @@
+{
+    "id": "quiz_693191fca12de",
+    "title": "allemagne",
+    "status": "en_ecriture",
+    "owner": null,
+    "questions": [
+        {
+            "name": "Dirrigeant en 1939",
+            "type": "qcm",
+            "points": "1",
+            "answers": "Himmler; Hitler; Rommel; Ribbentrop",
+            "correct": "Hitler"
+        },
+        {
+            "name": "Armistice ww2",
+            "type": "qcm",
+            "points": "1",
+            "answers": "08\/05\/1945; 11\/11\/1918; 07\/12\/1941",
+            "correct": "08\/05\/1945"
+        },
+        {
+            "name": "creation du mur de berlin",
+            "type": "qcm",
+            "points": "3",
+            "answers": "1961; 1947; 1989; 1986",
+            "correct": "1961"
+        },
+        {
+            "name": "chute du mur de berlin",
+            "type": "qcm",
+            "points": "2",
+            "answers": "1989; 1991; 1953; 1975",
+            "correct": "1989"
+        }
+    ]
+}

@@ -1,9 +1,0 @@
-{
-  "name": "Quizzeo",
-  "logo": "assets/logo/quizzeo.png",
-  "theme": {
-    "primary_color": "#2F80ED",
-    "secondary_color": "#56CCF2",
-    "background_color": "#F2F2F2"
-  }
-}

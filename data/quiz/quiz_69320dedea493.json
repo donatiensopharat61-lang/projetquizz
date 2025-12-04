@@ -1,0 +1,40 @@
+{
+    "id": "quiz_69320dedea493",
+    "title": "URSS",
+    "status": "en_ecriture",
+    "questions": [
+        {
+            "text": "Quand \u00e0 eu lieu la r\u00e9volution d'octobre ?",
+            "points": 1,
+            "answers": [
+                "1917",
+                "1918",
+                "1920",
+                "1924"
+            ],
+            "correct": "1917"
+        },
+        {
+            "text": "En quelle ann\u00e9e L\u00e9nine d\u00e9c\u00e8de ?",
+            "points": 3,
+            "answers": [
+                "1922",
+                "1936",
+                "1924",
+                "1919"
+            ],
+            "correct": "1924"
+        },
+        {
+            "text": "Qui le succ\u00e8de ?",
+            "points": 2,
+            "answers": [
+                "Trotski",
+                "Brejnev",
+                "Staline",
+                "Gorbatchev"
+            ],
+            "correct": "Staline"
+        }
+    ]
+}

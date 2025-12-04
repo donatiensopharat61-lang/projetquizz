@@ -1,12 +1,9 @@
 <?php
 // dashboard_ecole.php
-// Minimal file-based dashboard for role: ecole
-// Requirements: PHP 7+, writable 'data/quizzes' directory containing JSON files for quizzes
 session_start();
 
 // --- Simple auth stub (replace with real auth) ---
 if (!isset($_SESSION['user'])) {
-    // For demo purposes, auto-login a school user
     $_SESSION['user'] = [
         'id' => 1,
         'role' => 'ecole',
@@ -20,11 +17,11 @@ if ($_SESSION['user']['role'] !== 'ecole') {
     exit;
 }
 
-$dataDir = __DIR__ . '/data/quizzes';
+$dataDir = __DIR__ . '/data/quiz/';
 if (!is_dir($dataDir)) mkdir($dataDir, 0755, true);
 
-// Helper: load quizzes (files named quiz_<id>.json)
-function load_quizzes($dir) {
+// Charger les quiz
+function load_quiz($dir) {
     $files = glob($dir . '/quiz_*.json');
     $out = [];
     foreach ($files as $f) {
@@ -36,7 +33,7 @@ function load_quizzes($dir) {
     return $out;
 }
 
-$quizzes = load_quizzes($dataDir);
+$quiz = load_quiz($dataDir);
 
 // Action handlers (toggle active)
 if (isset($_GET['action']) && isset($_GET['id'])) {
@@ -57,7 +54,6 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         }
     }
 }
-
 ?>
 <!doctype html>
 <html lang="fr">
@@ -92,94 +88,84 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         <h1>Quizzeo — Dashboard École</h1>
         <div class="small">Connecté en tant que : <?php echo htmlspecialchars($_SESSION['user']['name']); ?></div>
     </div>
-    <div>
-        <a class="btn" href="create_quiz.php">+ Nouveau quiz</a>
-    </div>
 </header>
 
 <main class="container">
+
+    <!-- Résumé -->
     <section class="card">
         <h2>Résumé</h2>
         <?php
-            $total = count($quizzes);
+            $total = count($quiz);
             $launched = 0; $finished = 0; $responses = 0;
-            foreach ($quizzes as $q) {
-                if (!empty($q['status']) && $q['status'] === 'lancé') $launched++;
-                if (!empty($q['status']) && $q['status'] === 'terminé') $finished++;
+            foreach ($quiz as $q) {
+                if (($q['status'] ?? '') === 'lancé') $launched++;
+                if (($q['status'] ?? '') === 'terminé') $finished++;
                 $responses += isset($q['responses']) ? count($q['responses']) : 0;
             }
         ?>
         <div class="stats" style="margin-top:12px">
-            <div class="stat-item"><strong><?php echo $total; ?></strong><div class="small">Quiz créés</div></div>
             <div class="stat-item"><strong><?php echo $launched; ?></strong><div class="small">Quiz lancés</div></div>
             <div class="stat-item"><strong><?php echo $finished; ?></strong><div class="small">Quiz terminés</div></div>
             <div class="stat-item"><strong><?php echo $responses; ?></strong><div class="small">Réponses totales</div></div>
         </div>
     </section>
 
+    <!-- 🔥 NOUVELLE SECTION : Tous les quiz -->
     <section class="card">
-        <h2>Mes quiz</h2>
-        <?php if (empty($quizzes)): ?>
-            <p class="small">Aucun quiz pour le moment. Créez-en un pour commencer.</p>
+        <h2>Tous les quiz disponibles</h2>
+        <p class="small">Ces quiz sont visibles, peu importe leur statut : en écriture, lancé ou terminé.</p>
+
+        <?php if (empty($quiz)): ?>
+            <p class="small">Aucun quiz trouvé.</p>
         <?php else: ?>
             <table>
                 <thead>
                     <tr>
-                        <th>Nom</th>
+                        <th>Titre</th>
                         <th>Statut</th>
-                        <th>Questions</th>
-                        <th>Réponses</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($quizzes as $q):
-                    $id = $q['id'] ?? basename($q['file'] ?? '');
-                    $status = $q['status'] ?? 'en écriture';
-                    $nq = isset($q['questions']) ? count($q['questions']) : 0;
-                    $nr = isset($q['responses']) ? count($q['responses']) : 0;
-                ?>
-                    <tr>
-                        <td>
-                            <strong><?php echo htmlspecialchars($q['title'] ?? 'Untitled'); ?></strong>
-                            <div class="small">Créé le <?php echo htmlspecialchars($q['created_at'] ?? '—'); ?></div>
-                        </td>
-                        <td>
-                            <?php if ($status === 'lancé'): ?>
-                                <div class="status launched">Lancé</div>
-                            <?php elseif ($status === 'terminé'): ?>
-                                <div class="status launched">Terminé</div>
-                            <?php else: ?>
-                                <div class="status draft">En écriture</div>
-                            <?php endif; ?>
-                        </td>
-                        <td><?php echo $nq; ?></td>
-                        <td><?php echo $nr; ?></td>
-                        <td class="actions">
-                            <a class="btn ghost" href="view_quiz.php?id=<?php echo urlencode($q['id']); ?>">Voir</a>
-                            <a class="btn ghost" href="edit_quiz.php?id=<?php echo urlencode($q['id']); ?>">Éditer</a>
-                            <a class="btn" href="?action=toggle&id=<?php echo urlencode($q['id']); ?>"><?php echo empty($q['active']) ? 'Activer' : 'Désactiver'; ?></a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
+                    <?php foreach ($quiz as $q): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($q['title'] ?? 'Sans titre'); ?></td>
+
+                            <td>
+                                <span class="status <?php 
+                                    echo ($q['status'] ?? '') === 'lancé' ? 'launched' : 'draft'; 
+                                ?>">
+                                    <?php echo htmlspecialchars($q['status'] ?? 'inconnu'); ?>
+                                </span>
+                            </td>
+
+                            <td class="actions">
+                                <a class="btn ghost" href="take_quiz.php?id=<?php echo htmlspecialchars($q['id']); ?>">
+                                    Répondre
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         <?php endif; ?>
     </section>
 
+    <!-- Section : Quiz terminés + notes -->
     <section class="card">
         <h2>Quiz terminé — Notes élèves</h2>
         <p class="small">Sélectionnez un quiz terminé pour voir la liste des élèves et leurs notes.</p>
+        
         <?php
-            // quick selection form
-            $finishedQuizzes = array_filter($quizzes, function($q){ return isset($q['status']) && $q['status'] === 'terminé'; });
+            $finishedQuiz = array_filter($quiz, function($q){ return ($q['status'] ?? '') === 'terminé'; });
         ?>
-        <?php if (empty($finishedQuizzes)): ?>
+        <?php if (empty($finishedQuiz)): ?>
             <p class="small">Aucun quiz terminé.</p>
         <?php else: ?>
             <form method="get">
                 <select name="view_quiz_id">
-                    <?php foreach ($finishedQuizzes as $q): ?>
+                    <?php foreach ($finishedQuiz as $q): ?>
                         <option value="<?php echo htmlspecialchars($q['id']); ?>" <?php if(isset($_GET['view_quiz_id']) && $_GET['view_quiz_id']==$q['id']) echo 'selected'; ?>><?php echo htmlspecialchars($q['title']); ?></option>
                     <?php endforeach; ?>
                 </select>
@@ -218,7 +204,9 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         <?php endif; ?>
     </section>
 
-    <footer style="text-align:center;color:#999;margin-top:18px">Prototype — Stockage en fichiers JSON dans <code>data/quizzes/</code></footer>
+    <footer style="text-align:center;color:#999;margin-top:18px">
+        Prototype — Stockage en fichiers JSON dans <code>data/quiz/</code>
+    </footer>
 </main>
 
 </body>

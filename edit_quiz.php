@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     file_put_contents($path, json_encode($quiz, JSON_PRETTY_PRINT));
 
-    header("Location: dashboard.php");
+    header("Location: dashboardentreprise.php");
     exit;
 }
 ?>
