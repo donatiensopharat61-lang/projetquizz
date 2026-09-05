@@ -1,13 +1,11 @@
 <?php
 session_start();
 
-// Vérifier que l'utilisateur est connecté
 if (!isset($_SESSION["user"])) {
     header("Location: login.php");
     exit;
 }
 
-// Sauvegarde du quiz
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $quiz = [
@@ -26,10 +24,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         ];
     }
 
-    // Création dossier si nécessaire
+
     if (!is_dir("quiz")) mkdir("quiz");
 
-    // Sauvegarde dans un fichier
     file_put_contents("data/quiz/" . $quiz["id"] . ".json", json_encode($quiz, JSON_PRETTY_PRINT));
 
     header("Location: dashboardentreprise.php");

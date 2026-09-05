@@ -1,8 +1,6 @@
 <?php
-// dashboard_ecole.php
 session_start();
 
-// --- Simple auth stub (replace with real auth) ---
 if (!isset($_SESSION['user'])) {
     $_SESSION['user'] = [
         'id' => 1,
@@ -20,7 +18,6 @@ if ($_SESSION['user']['role'] !== 'ecole') {
 $dataDir = __DIR__ . '/data/quiz/';
 if (!is_dir($dataDir)) mkdir($dataDir, 0755, true);
 
-// Charger les quiz
 function load_quiz($dir) {
     $files = glob($dir . '/quiz_*.json');
     $out = [];
@@ -35,7 +32,6 @@ function load_quiz($dir) {
 
 $quiz = load_quiz($dataDir);
 
-// Action handlers (toggle active)
 if (isset($_GET['action']) && isset($_GET['id'])) {
     $id = preg_replace('/[^0-9_\-]/', '', $_GET['id']);
     $path = $dataDir . "/quiz_{$id}.json";
@@ -92,7 +88,6 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
 
 <main class="container">
 
-    <!-- Résumé -->
     <section class="card">
         <h2>Résumé</h2>
         <?php
@@ -111,7 +106,6 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         </div>
     </section>
 
-    <!-- 🔥 NOUVELLE SECTION : Tous les quiz -->
     <section class="card">
         <h2>Tous les quiz disponibles</h2>
         <p class="small">Ces quiz sont visibles, peu importe leur statut : en écriture, lancé ou terminé.</p>
@@ -152,7 +146,6 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         <?php endif; ?>
     </section>
 
-    <!-- Section : Quiz terminés + notes -->
     <section class="card">
         <h2>Quiz terminé — Notes élèves</h2>
         <p class="small">Sélectionnez un quiz terminé pour voir la liste des élèves et leurs notes.</p>

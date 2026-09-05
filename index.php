@@ -20,8 +20,6 @@ if (isset($_POST['login'])) {
  
            if (isset($users[$email]) && password_verify($password, $users[$email]['password'])) {
     $_SESSION['user'] = $users[$email];
-
-    // Rediriger vers le bon dashboard selon le rôle
     switch ($_SESSION['user']['role']) {
         case 'admin':
             header("Location: dashboardadmin.php");
@@ -36,7 +34,6 @@ if (isset($_POST['login'])) {
             header("Location: dashboardutilisateur.php");
             break;
         default:
-            // rôle inconnu
             header("Location: index.php?error=role");
     }
     exit();

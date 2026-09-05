@@ -1,5 +1,4 @@
 <?php
-// dashboard_entreprise.php
 session_start();
 
 if (!isset($_SESSION['user'])) {
@@ -16,7 +15,6 @@ if ($_SESSION['user']['role'] !== 'entreprise') {
     exit;
 }
 
-// Stockage JSON
 $dataSchools = __DIR__ . '/data/ecoles';
 $dataQuiz = __DIR__ . '/data/quiz';
 $dataAnswers = __DIR__ . '/data/answers';
@@ -110,7 +108,6 @@ $quiz = load_dir($dataQuiz);
                 <?php foreach ($quiz as $q): ?>
 
                     <?php  
-                        // 🔥 Nouveau : compter les réponses enregistrées
                         $respFile = $dataAnswers . "/" . $q['id'] . ".json";
                         $respCount = file_exists($respFile)
                             ? count(json_decode(file_get_contents($respFile), true))
@@ -145,7 +142,6 @@ $quiz = load_dir($dataQuiz);
                 <h3 style="margin-top:20px">Résultats — <?= htmlspecialchars($target['title']); ?></h3>
 
                 <?php  
-                    // 🔥 Nouveau : récupérer les réponses depuis /data/answers/
                     $respFile = $dataAnswers . "/" . $quizId . ".json";
                     $responses = [];
 

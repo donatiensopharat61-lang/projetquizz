@@ -9,11 +9,7 @@ $path = "data/quiz/quiz_" . $quiz_id . ".json";
 if (!file_exists($path)) die("Quiz introuvable.");
 
 $quiz = json_decode(file_get_contents($path), true);
-
-// Changer le statut
 $quiz['status'] = "terminé";
-
-// Sauvegarder
 file_put_contents($path, json_encode($quiz, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE));
 
 header("Location: dashboardecole.php");

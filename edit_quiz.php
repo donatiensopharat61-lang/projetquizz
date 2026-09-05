@@ -9,7 +9,6 @@ if (!file_exists($path)) die("Quiz introuvable");
 
 $quiz = json_decode(file_get_contents($path), true);
 
-// Mise à jour
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $quiz["title"] = $_POST["title"];

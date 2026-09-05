@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Récupérer l'ID du quiz (GET ou POST)
 if (isset($_GET["id"])) {
     $quiz_id = $_GET["id"];
 } elseif (isset($_POST["quiz_id"])) {
@@ -17,23 +16,19 @@ if (!file_exists($path)) die("Quiz introuvable");
 
 $quiz = json_decode(file_get_contents($path), true);
 
-// Vérifier les réponses
 if (!isset($_POST["answer"])) die("Aucune réponse fournie");
 
 $score = 0;
 
 foreach ($quiz["questions"] as $i => $q) {
 
-    // Récupérer la bonne réponse
     $correct = $q["correct"] ?? "";
 
-    // Comparer avec la réponse envoyée par l’utilisateur
     if (isset($_POST["answer"][$i]) && $_POST["answer"][$i] == $correct) {
         $score += intval($q["points"] ?? 1);
     }
 }
 
-// Préparer les données sauvegardées
 $response = [
     "id" => uniqid("resp_"),
     "user" => $_SESSION["user"]["name"] ?? "Anonyme",
@@ -42,10 +37,8 @@ $response = [
     "answers" => $_POST["answer"]
 ];
 
-// Créer le dossier answers si besoin
 if (!is_dir("data/answers")) mkdir("data/answers");
 
-// Charger réponses existantes
 $existing = [];
 if (file_exists($path_res)) {
     $existing = json_decode(file_get_contents($path_res), true);
@@ -53,7 +46,6 @@ if (file_exists($path_res)) {
 
 $existing[] = $response;
 
-// Sauvegarder
 file_put_contents($path_res, json_encode($existing, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
 ?>

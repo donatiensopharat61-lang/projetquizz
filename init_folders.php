@@ -1,6 +1,4 @@
 <?php
-// init_folders.php
-// Script pour créer automatiquement les dossiers nécessaires
 
 $paths = [
     "data",
@@ -9,7 +7,6 @@ $paths = [
 
 foreach ($paths as $path) {
 
-    // Si le dossier n'existe pas, on le crée
     if (!is_dir($path)) {
         if (mkdir($path, 0777, true)) {
             echo "Dossier créé : $path<br>";
@@ -20,7 +17,6 @@ foreach ($paths as $path) {
         echo "✔ Le dossier existe déjà : $path<br>";
     }
 
-    // Tenter de mettre les permissions
     if (chmod($path, 0777)) {
         echo "Permissions mises à 777 sur : $path<br>";
     } else {
@@ -30,7 +26,6 @@ foreach ($paths as $path) {
     echo "<hr>";
 }
 
-// Vérification finale
 if (is_dir("data/quiz")) {
     echo "<h3 style='color:green'>Tout est prêt ! Les quiz seront correctement stockés.</h3>";
 } else {

@@ -25,15 +25,10 @@ $quiz = json_decode(file_get_contents($path), true);
 $i = 0;
 foreach ($quiz["questions"] as $q):
 
-    // 🔥 1. NOM DE LA QUESTION (compatibilité)
     $label = $q["name"] ?? $q["text"] ?? "Question";
-
-    // 🔥 2. RÉPONSES (compatibilité)
     if (is_array($q["answers"])) {
-        // déjà un array → OK
         $answers = $q["answers"];
     } else {
-        // ancienne version → answers = "A;B;C"
         $answers = explode(";", $q["answers"]);
     }
 

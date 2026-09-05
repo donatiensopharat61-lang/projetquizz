@@ -1,9 +1,5 @@
 <?php
-// dashboard_admin.php
-// Tableau de bord administrateur — Gestion écoles, utilisateurs, quiz
 session_start();
-
-// --- Auth provisoire ---
 if (!isset($_SESSION['user'])) {
     $_SESSION['user'] = [
         'id' => 1,
@@ -18,7 +14,6 @@ if ($_SESSION['user']['role'] !== 'admin') {
     exit;
 }
 
-// Répertoires (stockage simple JSON)
 $dataUsers = __DIR__ . '/data/users';
 $dataSchools = __DIR__ . '/data/ecoles';
 $dataQuizzes = __DIR__ . '/data/quizzes';
